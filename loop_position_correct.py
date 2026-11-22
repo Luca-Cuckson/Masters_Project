@@ -183,7 +183,7 @@ print(resObjs[15].__dict__.keys())  # Check to see if uncorrected parameters pre
 # Obtain fits for resonator objects
 fitresObjs = []
 res_offset = 15  # Offset to pick 1st resonator read off
-res_count = 6  # Number of resonators to check
+res_count = 60  # Number of resonators to check
 
 for i in range(res_count):  # Using group github code counter-clockwise versions of fitting parameters (since our loops are opposite sweep direction)
     i += res_offset
@@ -206,14 +206,16 @@ for i in range(15, 19):
     ax2.axis('equal')
 """
 
-n = 5   # check a single resonator
+n = 0  # check a single resonator
 
 # Check to see if fit parameters for resonators are obtained
 resObj2 = fitresObjs[n]  # Picking a specific resonator to observe
+print('Picked resonator is', resObj2.name)
 print(resObj2.__dict__.keys())  # Check all resonator fit quantities obtained
 print(resObj2.lmfit_result['default']['result'].params.keys())
 print('Guess = ', resObj2.fmin, ' Hz')  # Initial guess of resonant frequency
 print('Best fit = ', resObj2.lmfit_result['default']['result'].params['f0'].value, ' Hz') # If significant difference observed, plot data to see why
+print('Reduced chi-squared = ', resObj2.lmfit_result['default']['result'].redchi)
 
 
 # Plot of IQ loop alone
@@ -235,18 +237,25 @@ figA = scr.plotResListData([resObj2],
                           plot_fits = [True, True, True]) #Overlay the best fit, need to specify for each of the plot_types
 #"""
 
-"""
-for i in range(5):  # Self-plotting to check resonator loops
-    offset = n
-    fig, (ax1, ax2) = plt.subplots(2, 1)
+# Now plot my own |S_21| function to allow for analysing loop properties
 
-    ax1.plot(fitresObjs[i+offset].freq, np.sqrt(fitresObjs[i+offset].I**2 + fitresObjs[i+offset].Q**2))  # magnitude of S21?
-    ax2.plot(fitresObjs[i+offset].I, fitresObjs[i+offset].Q, '.')    # Check if IQ loop poitning towards origin
+MagS_21 = np.sqrt(resObj2.I ** 2 + resObj2.Q ** 2)
 
-    ax2.axvline(0, color='k')
-    ax2.axhline(0, color='k')
-    ax2.axis('equal')
-"""
+# Plot to check that I'm getting same as scraps module
+plt.figure(21)
+plt.plot(resObj2.freq, MagS_21)
+
+
+# Now find the "velocity gradient" of S_21
+S21_gradient = []
+for i in range(len(resObj2.freq) - 1):
+    S21_gradient.append(resObj2.freq[i+1] - resObj2.freq[i])
+
+S21_gradient.append(S21_gradient[-1])
+
+plt.figure(22)
+plt.plot(resObj2.freq, S21_gradient)
+
 
 plt.show()
 
@@ -254,13 +263,24 @@ plt.show()
 # MULTI-RESONATOR INFO
 # ======================================================================================================= 
 
+print(fitresObjs[0].name)
+
 f0s = []
 qcs = []
 qis = []
+redChis = []
 for i in range(len(fitresObjs)):
     f0s.append(fitresObjs[i].lmfit_result['default']['result'].params['f0'].value)
     qcs.append(fitresObjs[i].lmfit_result['default']['result'].params['qc'].value)
     qis.append(fitresObjs[i].lmfit_result['default']['result'].params['qi'].value)
+    redChis.append(fitresObjs[i].lmfit_result['default']['result'].redchi)
+
+    if fitresObjs[i].lmfit_result['default']['result'].params['qc'].value > 1e7:
+        print(fitresObjs[i].name)
+
+Qs = np.sqrt((np.array(qis)) ** 2 + (np.array(qcs)) ** 2)
+
+print(Qs)
 
 print("Resonant frequencies =", f0s)
 print("Coupling quality factors =", qcs)
@@ -270,12 +290,16 @@ resNum = []
 for i in range(res_count):
     resNum.append(i + res_offset)
 
-fig, (ax1,ax2,ax3) = plt.subplots(3, 1, sharex=True)
+fig, (ax1,ax2,ax3,ax4, ax5) = plt.subplots(5, 1, sharex=True)
 ax1.plot(resNum, f0s)
 ax2.plot(resNum, qcs)
-ax2.set_ylim(0, 100000)
+ax2.set_ylim(0, 800000)
 ax3.plot(resNum, qis)
-ax3.set_ylim(0, 2 * 1e6)
+ax3.set_ylim(0, 1e6)
+ax4.plot(resNum, redChis)
+ax4.set_ylim(0, 500)
+ax5.plot(resNum, Qs)
+ax5.set_ylim(0, 10 * 1e5)
 
 # Quickly get some filtered data to look at majority of resonators
 # some outliers are throwing the histogram fit way off
@@ -292,4 +316,4 @@ ax2.hist(filtered_qi, 20)
 
 
 plt.show()
-# %%
+ # %%

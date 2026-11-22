@@ -5,8 +5,8 @@ import numpy.typing as npt
 import lmfit as lf
 import scraps as scr
 
-from hanger_resonator_ccw import hanger_ccw_fit, hanger_ccw_params
-from looping_funcs import compute_loop_rotation
+from functions.hanger_resonator_ccw import hanger_ccw_fit, hanger_ccw_params
+from functions.looping_funcs import compute_loop_rotation
 
 
 _DISABLED_POWER_DB = -120

@@ -56,8 +56,8 @@ if __name__ == "__main__":
     
     # Loads photon data from a number of HDF5 files matching the given glob pattern.
 
-    data_dir = "C:/Users/lucac/OneDrive/Documents/University/Year 4/Masters/Python_Coding"
-    resonator_ids, arrival_times, baselines, peaks = load_photon_h5(f"{data_dir}/first_beginnings/blue/*_blue_*.h5")
+    data_dir = r"D:\LucaC_L4_Project\11-11-26_Data\Initial_Powers"
+    resonator_ids, arrival_times, baselines, peaks = load_photon_h5(f"{data_dir}/520nm/*_520nm_*.h5")
 
     # Select peaks by resonator ID
     nres=1024
@@ -98,14 +98,14 @@ if __name__ == "__main__":
                 )
                 amplitude, mean, stddev = popt
                 fwhm = 2.355 * stddev
-                print(
-                    f"Gaussian mean: {mean:.3f}, stddev: {stddev:.3f}, "
-                    f"FWHM: {fwhm:.3f}, "
-                )
+                #print(
+                #    f"Gaussian mean: {mean:.3f}, stddev: {stddev:.3f}, "     # COmmented out to save time
+                #    f"FWHM: {fwhm:.3f}, "
+                #)
                 energy_res = mean / fwhm
-                print(
-                    f"Energy resolution: {energy_res:.3f}"
-                )
+                #print(
+                #    f"Energy resolution: {energy_res:.3f}"    # Commented out to save time 
+                #)
                 plt.plot(bin_centers, gaussian(bin_centers, *popt), color="red", linewidth=2, label="Gaussian fit")
                 plt.legend()
             except (RuntimeError, ValueError) as exc:
@@ -113,14 +113,14 @@ if __name__ == "__main__":
                 mean, stddev, fwhm, energy_res, amplitude = np.nan, np.nan, np.nan, np.nan, np.nan
 
         # append resonator ID and energy resolution to a single text file
-        with open(f"{data_dir}/energy_resolution.txt", "a") as f:
+        with open(f"energy_resolution.txt", "a") as f:
             f.write(f"{resonator_id}\t{energy_res:.3f}\n")
 
         # append resonator ID and mean, fwhm to a single text file
-        with open(f"{data_dir}/mean_fwhm.txt", "a") as f:
+        with open(f"mean_fwhm.txt", "a") as f:
             f.write(f"{resonator_id}\t{mean:.3f}\t{fwhm:.3f}\n")
 
-        plot = 'Y'
+        plot = 'N'
         # skip plot?
         if plot == 'Y':
             #xs = np.linspace(0, 140, 400)

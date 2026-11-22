@@ -2,3 +2,5 @@ first_beginnings/
 
 *.txt
 *.h5
+
+__pycache__

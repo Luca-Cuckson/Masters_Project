@@ -116,7 +116,7 @@ def sendHome(Resonator_list, sweep):
         resonators.append(
             scr.makeResFromData({
             'name': resname,
-            'temp': 0.1,
+            'temp': 0.02,
             'pwr': powers[i],
             'freq': freq,
             'I': I_new,
@@ -154,8 +154,8 @@ fitresObjs_p3 = []
 fitresObjs_m3 = []
 
 
-for i in range(res_count):  # Using group github code counter-clockwise versions of fitting parameters (since our loops are opposite sweep direction)
-    i += res_offset
+for j in range(res_count):  # Using group github code counter-clockwise versions of fitting parameters (since our loops are opposite sweep direction)
+    i = j + res_offset
     resObjs_i[i].load_params(hrc.hanger_ccw_params)
     resObjs_i[i].do_lmfit(hrc.hanger_ccw_fit)
 
@@ -170,7 +170,7 @@ for i in range(res_count):  # Using group github code counter-clockwise versions
     fitresObjs_m3.append(resObjs_m3[i])
 
 # Combine resonator lists into one master list for plotting
-resList = fitresObjs_i.append(fitresObjs_p3.append(fitresObjs_m3))
+resList = fitresObjs_i + fitresObjs_p3 + fitresObjs_m3  # Note to self: do not append, end up with None types
 
 #%% ======================================================================================================= 
 # VISUAL CHECKING
@@ -190,8 +190,8 @@ figA = scr.plotResListData(sameRes_diffPwr,
                             plot_types=['IQ', #Real vs Imaginary part of S21
                                         'rIQ', #residual of fits in IQ plane
                                         'LogMag', #Magnitude of S21 vs frequency
-                                        'Phase'], #Phase of S21 vs frequency
-                            show_colorbar = False,
+                                        'uPhase'], #Phase of S21 vs frequency
+                            color_by = 'pwrs',
                             fig_size=4,
                             num_cols = 2,
                             force_square = True,
@@ -204,4 +204,16 @@ scr.plotResSweepParamsVsPwr(sameRes_diffPwr)
 
 plt.show()
 """
+#%% ======================================================================================================= 
+# USE RESONATOR SWEEP OBJECTS
+# =========================================================================================================
+
+# create resonator sweep object to allow for comparison of powers
+resSweep = scr.ResonatorSweep(sameRes_diffPwr, index='block')
+
+#Look at the first few frequencies:
+print('\nf0\n',resSweep['f0'].head())
+
+#and the first few reduced-chi-squared values
+print('\nredchi\n',resSweep['redchi'].head())
 # %%

@@ -1,29 +1,42 @@
 import numpy as np
 import matplotlib.pyplot as plt
+'''
+bfile1 = 'first_beginnings/obtained_values/energy_resolution_blue.txt'
+bfile2 = 'first_beginnings/obtained_values/mean_fwhm_blue.txt'
 
-bfile1 = 'energy_resolution_blue.txt'
-bfile2 = 'mean_fwhm_blue.txt'
+gfile1 = 'first_beginnings/obtained_values/energy_resolution_green.txt'
+gfile2 = 'first_beginnings/obtained_values/mean_fwhm_green.txt'
 
-gfile1 = 'energy_resolution_green.txt'
-gfile2 = 'mean_fwhm_green.txt'
+rfile1 = 'first_beginnings/obtained_values/energy_resolution_red.txt'
+rfile2 = 'first_beginnings/obtained_values/mean_fwhm_red.txt'
+'''
 
-rfile1 = 'energy_resolution_red.txt'
-rfile2 = 'mean_fwhm_red.txt'
+bfile1 = 'Energy_Resolution/energy_resolution_520nm.txt'
+bfile2 = 'Energy_Resolution/mean_fwhm_520nm.txt'
+
+gfile1 = 'Energy_Resolution/energy_resolution_635nm.txt'
+gfile2 = 'Energy_Resolution/mean_fwhm_635nm.txt'
+
+rfile1 = 'Energy_Resolution/energy_resolution_780nm.txt'
+rfile2 = 'Energy_Resolution/mean_fwhm_780nm.txt'
 
 bres_id, bEres = np.loadtxt(bfile1, usecols=(0,1), unpack=True)
 bmean, bfwhm = np.loadtxt(bfile2, usecols=(1,2), unpack=True)
 bmed = np.nanmedian(bmean)
-print(bmed)
+print('Blue median =', bmed)
+print('Blue mean =', bmean)
 
 gres_id, gEres = np.loadtxt(gfile1, usecols=(0,1), unpack=True)
 gmean, gfwhm = np.loadtxt(gfile2, usecols=(1,2), unpack=True)
 gmed = np.nanmedian(gmean)
-print(gmed)
+print('Green median =', gmed)
+print('Green mean =', gmean)
 
 rres_id, rEres = np.loadtxt(rfile1, usecols=(0,1), unpack=True)
 rmean, rfwhm = np.loadtxt(rfile2, usecols=(1,2), unpack=True)
 rmed = np.nanmedian(rmean)
-print(rmed)
+print('Red median =', rmed)
+print('Red mean =', rmean)
 
 #print(len(rEres), len(rmean))
 #print(len(rres_id), len(rfwhm))
